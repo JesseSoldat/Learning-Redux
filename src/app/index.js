@@ -1,39 +1,11 @@
-// import React from 'react';
-// import { render } from 'react-dom';
+import React from 'react';
+import { render } from 'react-dom';
 
-// import { User } from './components/User';
-// import { Main } from './components/Main';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import logger from 'redux-logger';
+import { Provider } from 'react-redux';
 
-// class App extends React.Component {
-// 	constructor(props) {
-// 		super();
-// 		this.state = {
-// 			username: 'Max'
-// 		};
-// 	}
-
-// 	changeUsername(newName){
-// 		this.setState({
-// 			username: newName
-// 		});
-// 	}
-
-// 	render(){
-// 		return(
-// 			<div className="container">
-// 				<Main changeUsername={this.changeUsername.bind(this)}/>
-// 				<User username={this.state.username}/>
-// 			</div>
-// 			);
-// 	}
-// }
-
-// render(<App />, document.getElementById('app'));
-
-
-
-import { createStore, combineReducers } from 'redux';
-
+import App from './components/App';
 
 const mathReducer = (state = {
 	result: 1,
@@ -79,30 +51,25 @@ const userReducer = (state = {
 	return state;
 };
 
-const store = createStore(combineReducers({mathReducer, userReducer}));
+const myLogger = (store) => (next) => (action) => {
+	console.log("Logged Action: ", action);
+	next(action);
+}
+
+const store = createStore(combineReducers({mathReducer, userReducer}), {}, applyMiddleware(logger()));
 
 
 store.subscribe( () => {
-	console.log("Store Updated!", store.getState());
+	//console.log("Store Updated!", store.getState());
 })
 
-store.dispatch({
-	type: "ADD",
-	payload: 10
+// store.dispatch({
+// 	type: "ADD",
+// 	payload: 10
+// });
 
-});
 
-store.dispatch({
-	type: 'SUBTRACT',
-	payload: 3
-});
-
-store.dispatch({
-	type: 'ADD',
-	payload: 13
-});
-
-store.dispatch({
-	type: 'SET_AGE',
-	payload: 30
-});
+render(
+	<Provider store={store}>
+		<App />
+	</Provider>, document.getElementById('app'));
