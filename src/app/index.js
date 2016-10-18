@@ -34,18 +34,32 @@
 
 import { createStore } from 'redux';
 
-const reducer = (state, action) => {
+const initialState = {
+	result: 1,
+	lastValues: []
+}
+
+
+const reducer = (state = initialState, action) => {
 	switch (action.type) {
 		case "ADD":
-			state = state + action.payload;
+			state = {
+				...state,
+				result: state.result + action.payload
+			};
 			break;
 		case "SUBTRACT":
+			state = {
+				...state,
+				result: state.result - action.payload
+			}
 			break
 	}
 	return state;
 };
 
-const store = createStore(reducer, 1);
+const store = createStore(reducer);
+
 
 store.subscribe( () => {
 	console.log("Store Updated!", store.getState());
@@ -55,4 +69,14 @@ store.dispatch({
 	type: "ADD",
 	payload: 10
 
+});
+
+store.dispatch({
+	type: 'SUBTRACT',
+	payload: 3
+});
+
+store.dispatch({
+	type: 'ADD',
+	payload: 13
 });
